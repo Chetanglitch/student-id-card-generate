@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RC Patel Institute of Technology | Student Portal</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand-wrap">
+        <div class="brand-badge">RC</div>
+        <div class="brand-text">
+          <h1>RC Patel Institute of Technology</h1>
+          <p>Student & Admin Portal</p>
+        </div>
+      </div>
+      <div class="portal-menu">
+        <button id="menuToggle" class="menu-toggle" type="button" aria-label="Open portal menu" aria-expanded="false" aria-controls="portalNavigation">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <nav id="portalNavigation" class="main-nav hidden" aria-label="Portal navigation">
+          <button class="tab-btn active" data-target="studentPortal">Student Portal</button>
+          <button class="tab-btn" data-target="adminPortal">Admin Portal</button>
+          <button class="tab-btn" data-target="verifiedCardPortal">Download ID Card</button>
+        </nav>
+      </div>
+    </header>
+
+    <main class="app-shell">
+      <section id="studentPortal" class="portal-panel active">
+        <div class="panel-grid">
+          <div class="form-panel">
+            <div class="panel-head">
+              <span class="chip">Student Access</span>
+              <h2>Fill Student Details</h2>
+            </div>
+
+            <div class="field-grid">
+              <div class="field-group">
+                <label for="studentName">Student Name</label>
+                <input id="studentName" type="text" placeholder="Enter full name" />
+              </div>
+              <div class="field-group">
+                <label for="studentRoll">Roll Number</label>
+                <input id="studentRoll" type="text" inputmode="numeric" placeholder="Enter 3-digit roll no" />
+              </div>
+              <div class="field-group">
+                <label for="studentCourse">Course</label>
+                <input id="studentCourse" type="text" placeholder="Enter course" />
+              </div>
+              <div class="field-group">
+                <label for="studentDepartment">Department</label>
+                <select id="studentDepartment">
+                  <option value="">Select department</option>
+                  <option value="Computer Engineering">Computer Engineering</option>
+                  <option value="Data Science">Data Science</option>
+                  <option value="AI &amp; ML">AI &amp; ML</option>
+                  <option value="AIDS">AIDS</option>
+                  <option value="Electrical Engineering">Electrical Engineering</option>
+                  <option value="Civil Engineering">Civil Engineering</option>
+                  <option value="ENTC">ENTC</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="studentSemester">PRN</label>
+                <input id="studentSemester" type="text" inputmode="numeric" placeholder="Enter 9-digit PRN" />
+              </div>
+              <div class="field-group">
+                <label for="studentEmail">Email</label>
+                <input id="studentEmail" type="email" placeholder="Enter email address" />
+              </div>
+              <div class="field-group">
+                <label for="studentPhone">Contact</label>
+                <input id="studentPhone" type="tel" placeholder="Enter phone number" />
+              </div>
+              <div class="field-group">
+                <label for="studentBlood">Blood Group</label>
+                <select id="studentBlood">
+                  <option value="">Select blood group</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                </select>
+              </div>
+              <div class="field-group">
+                <label for="studentDob">Date of Birth</label>
+                <input id="studentDob" type="date" />
+              </div>
+              <div class="field-group">
+                <label for="studentAbcId">ABC ID</label>
+                <input id="studentAbcId" type="text" placeholder="Enter ABC ID" />
+              </div>
+              <div class="field-group">
+                <label for="studentPhoto">Student Photo</label>
+                <input id="studentPhoto" type="file" accept="image/*" />
+              </div>
+            </div>
+
+            <div class="field-group full-width">
+              <label for="studentAddress">Address</label>
+              <textarea id="studentAddress" placeholder="Leave blank if not available"></textarea>
+            </div>
+
+            <div class="button-row">
+              <button id="generateBtn" class="primary">Preview Card</button>
+              <button id="saveBtn" class="accent">Save ID Card</button>
+              <button id="resetBtn" class="secondary">Reset</button>
+            </div>
+          </div>
+
+          <div class="preview-panel">
+            <div class="preview-topline">
+              <span>Official Student Identity</span>
+              <span class="validity">2026-27</span>
+            </div>
+
+            <div class="card-sides">
+              <div class="id-card" id="idCard">
+                <div class="card-top">
+                  <div class="college-mark">
+                    <div class="seal">RC</div>
+                    <div class="college-meta">
+                      <h3>RC Patel Institute of Technology</h3>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-body">
+                  <div class="student-info">
+                    <h2 id="previewName">Student Name</h2>
+                    <div class="info-grid">
+                      <div>
+                        <span>PRN</span>
+                        <strong id="previewSemester">---</strong>
+                      </div>
+                      <div>
+                        <span>Branch</span>
+                        <strong id="previewDepartment">---</strong>
+                      </div>
+                    </div>
+                    <div class="front-details">
+                      <div class="photo-frame">
+                        <img id="photoPreview" alt="Student photo" class="hidden-image student-photo-image" />
+                        <div class="photo-circle" id="photoCircle">RP</div>
+                      </div>
+                      <div class="front-email">
+                        <span>Email</span>
+                        <strong id="previewEmail">---</strong>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer">
+                  <div class="signature">Director Sign</div>
+                </div>
+              </div>
+
+              <div class="id-card back-card" id="idCardBack">
+                <div class="back-header">
+                  <div class="seal small">RC</div>
+                  <div>
+                    <h3>RC Patel Institute of Technology</h3>
+                    <p>Student Record Back Side</p>
+                  </div>
+                </div>
+
+                <div class="back-body">
+                  <div class="back-row">
+                    <span>Student Name</span>
+                    <strong id="backName">Student Name</strong>
+                  </div>
+                  <div class="back-row">
+                    <span>Date of Birth</span>
+                    <strong id="backDob">---</strong>
+                  </div>
+                  <div class="back-row">
+                    <span>ABC ID</span>
+                    <strong id="backAbcId">---</strong>
+                  </div>
+                  <div class="back-row">
+                    <span>Address</span>
+                    <strong id="backAddress">---</strong>
+                  </div>
+                  <div class="back-qr">
+                    <div class="qr-box">
+                      <img id="qrPreview" alt="QR code" class="hidden-image" />
+                      <span class="qr-label" id="qrLabel">QR</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card-footer back-footer">
+                  <div class="signature">Office Seal</div>
+                  <div class="active-chip">APPROVED</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="adminPortal" class="portal-panel hidden">
+        <div class="admin-box" id="adminLoginBox">
+          <h2>Admin Login</h2>
+          <div class="login-row">
+            <label for="adminUsername">Username</label>
+            <input id="adminUsername" type="text" placeholder="Enter admin username" />
+          </div>
+          <div class="login-row">
+            <label for="adminPassword">Password</label>
+            <input id="adminPassword" type="password" placeholder="Enter admin password" />
+          </div>
+          <button id="adminLoginBtn" class="primary full">Login</button>
+        </div>
+
+        <div class="admin-box hidden" id="adminDashboard">
+          <div class="admin-header">
+            <h2>Student ID Verification</h2>
+            <button id="logoutAdminBtn" class="secondary small-btn">Logout</button>
+          </div>
+          <div class="admin-tools">
+            <input id="adminSearch" type="search" aria-label="Search student cards" placeholder="Search name, roll, PRN, department" />
+            <select id="adminStatusFilter" aria-label="Filter by verification status">
+              <option value="all">All statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Verified">Verified</option>
+            </select>
+            <button id="exportAdminCsvBtn" class="secondary" type="button">Export CSV</button>
+          </div>
+          <p id="adminResultCount" class="admin-result-count" aria-live="polite"></p>
+          <div id="studentList" class="student-list"></div>
+        </div>
+      </section>
+
+      <section id="verifiedCardPortal" class="portal-panel hidden">
+        <div class="admin-box student-login-box" id="studentLoginBox">
+          <span class="chip">Verified Student Access</span>
+          <h2>Get Your ID Card</h2>
+          <div class="login-row">
+            <label for="verifiedStudentName">Name as on ID Card</label>
+            <input id="verifiedStudentName" type="text" autocomplete="name" placeholder="Enter the name printed on your ID card" />
+          </div>
+          <div class="login-row">
+            <label for="verifiedPrn">PRN</label>
+            <input id="verifiedPrn" type="text" inputmode="numeric" maxlength="9" placeholder="Enter 9-digit PRN" />
+          </div>
+          <p id="studentLoginMessage" class="login-message" role="status"></p>
+          <button id="studentCardLoginBtn" class="primary full">Login and View Card</button>
+        </div>
+
+        <div id="studentCardResult" class="verified-card-result hidden">
+          <div class="verified-card-heading">
+            <div>
+              <span class="chip">Verified ID Card</span>
+              <h2 id="verifiedCardStudentName">Student ID Card</h2>
+            </div>
+            <button id="studentCardLogoutBtn" class="secondary small-btn">Logout</button>
+          </div>
+          <div id="verifiedCardPrintArea">
+            <div class="card-sides" id="verifiedCardSides"></div>
+          </div>
+          <div class="verified-card-actions">
+            <button id="downloadCardBtn" class="primary">Download Card</button>
+            <button id="printCardBtn" class="secondary">Print Card</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
