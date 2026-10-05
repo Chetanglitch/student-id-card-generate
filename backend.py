@@ -59,6 +59,9 @@ def connect_db():
     connection.execute(
         "CREATE INDEX IF NOT EXISTS idx_verified_name_login ON student_cards(status, name, prn)"
     )
+    connection.execute(
+        "CREATE TABLE IF NOT EXISTS app_settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)"
+    )
     return connection
 
 
@@ -184,6 +187,16 @@ class AppHandler(SimpleHTTPRequestHandler):
                 )]
             self.send_json(200, {"cards": cards})
             return
+        if path == "/api/admin/signature":
+            if not self.session_user("admin"):
+                self.send_json(401, {"error": "Admin login required"})
+                return
+            with db_session() as connection:
+                row = connection.execute(
+                    "SELECT value FROM app_settings WHERE key = 'director_signature'"
+                ).fetchone()
+            self.send_json(200, {"signatureDataUrl": row["value"] if row else ""})
+            return
         if path == "/api/student/card":
             token = self.session_user("student")
             if not token:
@@ -224,6 +237,26 @@ class AppHandler(SimpleHTTPRequestHandler):
                     self.send_json(401, {"error": "Invalid admin username or password"})
                     return
                 self.issue_session("admin", {"ok": True})
+                return
+
+            if path == "/api/admin/signature":
+                if not self.session_user("admin"):
+                    self.send_json(401, {"error": "Admin login required"})
+                    return
+                signature = body.get("signatureDataUrl", "") if isinstance(body, dict) else ""
+                if not isinstance(signature, str) or len(signature) > 2_000_000:
+                    raise ValueError("Signature image is too large or invalid")
+                if signature and not re.fullmatch(
+                    r"data:image/(?:png|jpeg|webp);base64,[A-Za-z0-9+/]+={0,2}", signature
+                ):
+                    raise ValueError("Upload a PNG, JPG, or WebP signature image")
+                with db_session() as connection:
+                    connection.execute(
+                        "INSERT INTO app_settings (key, value) VALUES ('director_signature', ?) "
+                        "ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+                        (signature,),
+                    )
+                self.send_json(200, {"ok": True, "signatureDataUrl": signature})
                 return
 
             if path == "/api/admin/cards/import":
@@ -299,6 +332,11 @@ class AppHandler(SimpleHTTPRequestHandler):
                         if card.get("status") == "Blocked":
                             self.send_json(409, {"error": "Unblock this card before verifying it."})
                             return
+                        signature = connection.execute(
+                            "SELECT value FROM app_settings WHERE key = 'director_signature'"
+                        ).fetchone()
+                        if signature:
+                            card["directorSignatureDataUrl"] = signature["value"]
                         card.update(status="Verified", signedBy="Admin Office", signedAt=now_iso())
                     elif action == "block":
                         if card.get("status") != "Blocked":

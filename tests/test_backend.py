@@ -155,6 +155,47 @@ class BackendApiTests(unittest.TestCase):
         card["prn"] = "1234567890"
         self.assertEqual(self.request_json("/api/cards", "POST", card)[0], 400)
 
+    def test_admin_signature_is_private_persistent_and_added_when_verifying(self):
+        signature = "data:image/png;base64,aGVsbG8="
+        self.assertEqual(self.request_json("/api/admin/signature")[0], 401)
+        self.assertEqual(
+            self.request_json("/api/admin/signature", "POST", {"signatureDataUrl": signature})[0],
+            401,
+        )
+        self.assertEqual(
+            self.request_json(
+                "/api/admin/login", "POST",
+                {"username": "admin", "password": "admin123"}, self.admin,
+            )[0],
+            200,
+        )
+        self.assertEqual(
+            self.request_json(
+                "/api/admin/signature", "POST", {"signatureDataUrl": signature}, self.admin
+            )[0],
+            200,
+        )
+        self.assertEqual(
+            self.request_json("/api/admin/signature", client=self.admin)[1]["signatureDataUrl"],
+            signature,
+        )
+        self.assertEqual(
+            self.request_json(
+                "/api/admin/signature", "POST", {"signatureDataUrl": "javascript:alert(1)"}, self.admin
+            )[0],
+            400,
+        )
+        card = {
+            "id": "signature-card", "name": "Signed Student", "rollNo": "80",
+            "course": "B.E.", "department": "Data Science", "prn": "251106090",
+        }
+        self.assertEqual(self.request_json("/api/cards", "POST", card)[0], 201)
+        _, verified = self.request_json(
+            "/api/admin/cards/signature-card/verify", "POST", {}, self.admin
+        )
+        self.assertEqual(verified["card"]["directorSignatureDataUrl"], signature)
+        self.assertEqual(verified["card"]["status"], "Verified")
+
     def test_migrates_name_from_legacy_database(self):
         connection = sqlite3.connect(self.database_path)
         connection.execute(

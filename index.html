@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>RC Patel Institute of Technology | Student Portal</title>
-    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="style.css?v=5" />
   </head>
   <body>
     <header class="topbar">
@@ -160,7 +160,7 @@
                 </div>
 
                 <div class="card-footer">
-                  <div class="signature">Director Sign</div>
+                  <div class="signature"><span>Director Sign</span><img class="director-signature-image hidden-image" alt="Director signature" /></div>
                 </div>
               </div>
 
@@ -227,6 +227,19 @@
             <h2>Student ID Verification</h2>
             <button id="logoutAdminBtn" class="secondary small-btn">Logout</button>
           </div>
+          <section class="signature-settings" aria-labelledby="signatureSettingsTitle">
+            <div>
+              <h3 id="signatureSettingsTitle">Director Signature</h3>
+              <p>Stored signature will be added to cards when you verify them.</p>
+            </div>
+            <div class="signature-upload-row">
+              <label class="signature-file-label" for="directorSignatureFile">Choose signature image</label>
+              <input id="directorSignatureFile" type="file" accept="image/png,image/jpeg,image/webp" />
+              <img id="directorSignaturePreview" class="director-signature-preview hidden-image" alt="Stored director signature preview" />
+              <button id="saveDirectorSignatureBtn" class="secondary" type="button">Save Signature</button>
+            </div>
+            <p id="signatureStatus" class="signature-status" aria-live="polite"></p>
+          </section>
           <div class="admin-tools">
             <input id="adminSearch" type="search" aria-label="Search student cards" placeholder="Search name, roll, PRN, department" />
             <select id="adminStatusFilter" aria-label="Filter by verification status">
@@ -278,6 +291,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=4"></script>
   </body>
 </html>

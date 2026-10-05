@@ -139,9 +139,19 @@ function loadPhotoPreview(file) {
 function generateQrDataUrl(studentInfo) {
   if (typeof QRCode === 'undefined') throw new Error('QR code generator is unavailable');
   const qrContainer = document.createElement('div');
+  const qrText = studentInfo.verificationStatus === 'VERIFIED'
+    ? [
+      'RC Patel Institute of Technology',
+      'ID CARD STATUS: VERIFIED',
+      `Name: ${studentInfo.name || ''}`,
+      `PRN: ${studentInfo.prn || ''}`,
+      `Department: ${studentInfo.branch || ''}`,
+      `Roll No: ${studentInfo.rollNo || ''}`
+    ].join('\n')
+    : JSON.stringify(studentInfo);
   new QRCode(qrContainer, {
-    text: JSON.stringify(studentInfo), width: 256, height: 256,
-    correctLevel: QRCode.CorrectLevel.L
+    text: qrText, width: 256, height: 256,
+    correctLevel: QRCode.CorrectLevel.M
   });
   const canvas = qrContainer.querySelector('canvas');
   if (!canvas) throw new Error('QR code could not be generated');
@@ -389,6 +399,11 @@ function renderVerifiedCard(card) {
   front.querySelector('#previewSemester').textContent = card.prn || '---';
   front.querySelector('#previewDepartment').textContent = card.department || '---';
   front.querySelector('#previewEmail').textContent = card.email || '---';
+  if (card.directorSignatureDataUrl) {
+    const signature = front.querySelector('.director-signature-image');
+    signature.src = card.directorSignatureDataUrl;
+    signature.classList.remove('hidden-image');
+  }
   const photo = front.querySelector('#photoPreview');
   const initials = front.querySelector('#photoCircle');
   if (card.photoDataUrl) {
@@ -405,10 +420,11 @@ function renderVerifiedCard(card) {
   back.querySelector('#backAbcId').textContent = card.abcId || '---';
   back.querySelector('#backAddress').textContent = card.address || 'Address not provided';
   const qr = back.querySelector('#qrPreview');
-  qr.src = card.qrDataUrl || generateQrDataUrl({
+  qr.src = generateQrDataUrl({
     name: card.name, rollNo: card.rollNo, course: card.course, branch: card.department,
     prn: card.prn, email: card.email, phone: card.phone, bloodGroup: card.bloodGroup,
-    dateOfBirth: card.dob, abcId: card.abcId, address: card.address
+    dateOfBirth: card.dob, abcId: card.abcId, address: card.address,
+    verificationStatus: card.status === 'Verified' ? 'VERIFIED' : ''
   });
   qr.classList.remove('hidden-image');
   back.querySelector('#qrLabel').style.display = 'none';
@@ -523,6 +539,7 @@ async function loginAdmin() {
     await importLocalCards();
     document.getElementById('adminLoginBox').classList.add('hidden');
     document.getElementById('adminDashboard').classList.remove('hidden');
+    await loadDirectorSignature();
     await renderAdminList();
   } catch (error) {
     alert(error.message);
@@ -541,11 +558,68 @@ async function logoutAdmin() {
   document.getElementById('adminLoginBox').classList.remove('hidden');
 }
 
+async function prepareDirectorSignature(file) {
+  if (!file) return '';
+  if (!['image/png', 'image/jpeg', 'image/webp'].includes(file.type)) {
+    throw new Error('Choose a PNG, JPG, or WebP image.');
+  }
+  const dataUrl = await readFileAsDataURL(file);
+  const image = new Image();
+  await new Promise((resolve, reject) => {
+    image.onload = resolve;
+    image.onerror = () => reject(new Error('Signature image could not be opened.'));
+    image.src = dataUrl;
+  });
+  const scale = Math.min(1, 1000 / image.naturalWidth, 400 / image.naturalHeight);
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+  canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+  return canvas.toDataURL('image/png');
+}
+
+async function loadDirectorSignature() {
+  const { signatureDataUrl } = await apiRequest('/api/admin/signature');
+  const previewImage = document.getElementById('directorSignaturePreview');
+  const status = document.getElementById('signatureStatus');
+  if (signatureDataUrl) {
+    previewImage.src = signatureDataUrl;
+    previewImage.classList.remove('hidden-image');
+    status.textContent = 'A director signature is stored for future verifications.';
+  } else {
+    previewImage.src = '';
+    previewImage.classList.add('hidden-image');
+    status.textContent = 'No signature stored yet.';
+  }
+}
+
+async function saveDirectorSignature() {
+  const fileInput = document.getElementById('directorSignatureFile');
+  const status = document.getElementById('signatureStatus');
+  const file = fileInput.files?.[0];
+  if (!file) {
+    status.textContent = 'Choose a signature image first.';
+    return;
+  }
+  status.textContent = 'Saving signature...';
+  try {
+    const signatureDataUrl = await prepareDirectorSignature(file);
+    await apiRequest('/api/admin/signature', {
+      method: 'POST', body: JSON.stringify({ signatureDataUrl })
+    });
+    await loadDirectorSignature();
+    fileInput.value = '';
+  } catch (error) {
+    status.textContent = error.message;
+  }
+}
+
 document.getElementById('generateBtn').addEventListener('click', updateCard);
 document.getElementById('saveBtn').addEventListener('click', saveStudentCard);
 document.getElementById('resetBtn').addEventListener('click', resetForm);
 document.getElementById('adminLoginBtn').addEventListener('click', loginAdmin);
 document.getElementById('logoutAdminBtn').addEventListener('click', logoutAdmin);
+document.getElementById('saveDirectorSignatureBtn').addEventListener('click', saveDirectorSignature);
 document.getElementById('exportAdminCsvBtn').addEventListener('click', exportAdminCsv);
 document.getElementById('adminSearch').addEventListener('input', renderFilteredAdminList);
 document.getElementById('adminStatusFilter').addEventListener('change', renderFilteredAdminList);

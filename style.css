@@ -324,6 +324,25 @@ button:hover {
   flex-wrap: wrap;
 }
 
+@media (min-width: 961px) {
+  .panel-grid {
+    display: grid;
+    grid-template-columns: minmax(390px, 0.88fr) minmax(0, 1.12fr);
+    gap: 24px;
+    align-items: start;
+  }
+
+  .panel-grid > .form-panel,
+  .panel-grid > .preview-panel {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .panel-grid > .preview-panel {
+    align-self: start;
+  }
+}
+
 .form-panel,
 .preview-panel,
 .admin-box {
@@ -406,6 +425,67 @@ button:hover {
   border-radius: 16px;
   padding: 18px;
   background: linear-gradient(135deg, #f9fbff, #edf4ff);
+}
+
+.signature-settings {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 1fr);
+  gap: 10px 20px;
+  align-items: center;
+  margin-top: 22px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.signature-settings h3,
+.signature-settings p {
+  margin: 0;
+}
+
+.signature-settings h3 {
+  color: var(--navy);
+  font-size: 1rem;
+}
+
+.signature-settings p,
+.signature-status {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.signature-settings > div > p {
+  margin-top: 5px;
+}
+
+.signature-upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.signature-upload-row input[type="file"] {
+  min-width: 0;
+  padding: 8px;
+  font-size: 0.82rem;
+}
+
+.signature-file-label {
+  margin: 0;
+  font-size: 0.82rem;
+}
+
+.director-signature-preview {
+  max-width: 120px;
+  max-height: 44px;
+  object-fit: contain;
+}
+
+.signature-status {
+  grid-column: 1 / -1;
+  min-height: 1em;
+  margin: 0;
 }
 
 .student-card h4 {
@@ -633,13 +713,18 @@ button:hover {
 }
 
 .student-photo-image {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
   object-fit: contain;
+  display: block;
   background: #ffffff;
 }
 
 .qr-box {
-  width: 72px;
-  height: 72px;
+  width: 96px;
+  height: 96px;
   border: 2px solid var(--navy);
   border-radius: 12px;
   display: grid;
@@ -852,6 +937,7 @@ button:hover {
 
 .back-qr {
   display: flex;
+  align-items: center;
   justify-content: center;
   padding-top: 2px;
 }
@@ -872,6 +958,22 @@ button:hover {
   font-size: 0.78rem;
   font-weight: 600;
   font-style: normal;
+}
+
+.signature .director-signature-image {
+  display: inline-block;
+  width: auto;
+  max-width: 112px;
+  height: 30px;
+  object-fit: contain;
+  object-position: left center;
+  background: #ffffff;
+  border-radius: 2px;
+  vertical-align: middle;
+}
+
+.signature .director-signature-image.hidden-image {
+  display: none;
 }
 
 .active-chip {
@@ -899,7 +1001,9 @@ button:hover {
   }
 
   .panel-grid {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 700px);
+    justify-content: center;
   }
 
   .form-panel,
@@ -997,6 +1101,46 @@ button:hover {
 
   .admin-tools {
     grid-template-columns: 1fr;
+  }
+
+  .signature-settings {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell {
+    margin: 16px auto;
+    padding: 0 12px 32px;
+  }
+
+  .form-panel,
+  .preview-panel,
+  .admin-box {
+    border-radius: 16px;
+    padding: 20px 16px;
+  }
+
+  .card-sides {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .id-card,
+  .back-card {
+    width: 100%;
+    max-width: 340px;
+  }
+
+  .card-footer {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .signature {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
 }
 
